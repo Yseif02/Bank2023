@@ -23,7 +23,7 @@ public class Bank {
      * @return a new Patron with a unique ID, but no accounts
      */
     public Patron createNewPatron(){
-     
+        return null;
     }
 
     /**
@@ -37,7 +37,7 @@ public class Bank {
      * @throws IllegalArgumentException if p is null
      */
     public int openNewSavingsAccount(Patron p) throws ApplicationDeniedException{
-
+        return -1;
     }
 
     /**
@@ -51,7 +51,7 @@ public class Bank {
      * @throws IllegalArgumentException if p is null
      */
     public int openNewBrokerageAccount(Patron p)throws ApplicationDeniedException{
-
+        return -1;
     }
 
     /**
@@ -60,7 +60,7 @@ public class Bank {
      * @see java.util.Collections#unmodifiableSet(Set)
      */
     protected Set<Account> getAllAccounts() {
- 
+        return null;
     }
 
     /**
@@ -69,13 +69,13 @@ public class Bank {
      * @see java.util.Collections#unmodifiableSet(Set)
      */
     protected Set<Patron> getAllPatrons() {
-        
+        return null;
     }
 
     /**
      * @return the exchange used by this Bank
      */
     protected StockExchange getExchange() {
-        
+        return null;
     }
 }

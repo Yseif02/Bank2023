@@ -18,7 +18,7 @@ public class StockShares{
     }
 ;
     public int getQuantity() {
-  
+        return -1;
     }
 
     protected void setQuantity(int quantity) {
@@ -26,6 +26,6 @@ public class StockShares{
     }
 
     public StockListing getListing() {
-        
+        return null;
     }
 }

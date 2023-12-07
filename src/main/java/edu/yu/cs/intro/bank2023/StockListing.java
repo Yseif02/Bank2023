@@ -48,7 +48,7 @@ public class StockListing {
      * @throws IllegalArgumentException if availableShares <= 0
      */
     protected int addAvailableShares(int availableShares) {
-
+        return -1;
     }
     /**
      * reduce the number of shares available
@@ -57,6 +57,6 @@ public class StockListing {
      * @throws IllegalArgumentException if quantityToSubtract > the number of available shares
      */
     protected int reduceAvailableShares(int quantityToSubtract){
-
+        return -1;
     }
 }

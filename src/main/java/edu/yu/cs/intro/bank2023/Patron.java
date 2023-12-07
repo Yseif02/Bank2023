@@ -53,12 +53,12 @@ public class Patron {
      * @see BrokerageAccount#getValue()
      */
     public double getNetWorth(){
-
+        return -1;
     }
     public SavingsAccount getSavingsAccount() {
-      
+      return null;
     }
     public BrokerageAccount getBrokerageAccount() {
-        
+        return null;
     }
 }

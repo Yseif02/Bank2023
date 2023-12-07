@@ -24,7 +24,7 @@ public class BrokerageAccount extends Account implements Transaction{
      * @see java.util.Collections#unmodifiableList(List)
      */
     public List<StockShares> getListOfShares(){
-   
+        return null;
     }
 
     /**
@@ -59,6 +59,23 @@ public class BrokerageAccount extends Account implements Transaction{
      */
     @Override
     public double getValue() {
+        return -1;
+    }
 
+    /**
+     * @return which type of transaction is this?
+     */
+    @Override
+    public TxType getType() {
+        return null;
+    }
+
+    /**
+     * @return timestamp of transaction. Value of nanoTimeStamp must be set at time of construction to the return value of System.nanoTime()
+     * @see System#nanoTime()
+     */
+    @Override
+    public long getNanoTimestamp() {
+        return 0;
     }
 }

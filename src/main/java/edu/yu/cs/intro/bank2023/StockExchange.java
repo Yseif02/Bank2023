@@ -1,4 +1,5 @@
 package edu.yu.cs.intro.bank2023;
+import java.util.List;
 
 public class StockExchange {
 
@@ -22,7 +23,7 @@ public class StockExchange {
      * @return the StockListing object for the given tickerSymbol, or null if there is none
      */
     public StockListing getStockListing(String tickerSymbol){
-     
+        return null;
     }
 
     /**
@@ -30,6 +31,6 @@ public class StockExchange {
      * @see java.util.Collections#unmodifiableList(List)
      */
     public List<StockListing> getAllCurrentListings(){
-  
+        return null;
     }
 }

@@ -25,7 +25,7 @@ public class SavingsAccount extends Account implements Transaction{
      */
     @Override
     public double getValue() {
-
+        return -1;
     }
 
     /**
