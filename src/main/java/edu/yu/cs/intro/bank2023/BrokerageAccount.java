@@ -108,7 +108,7 @@ public class BrokerageAccount extends Account{
     public double getValue() {
         double totalValue = 0;
         for (StockShares stockShare:getListOfShares()) {
-            totalValue += stockShare.getListing().getPrice() * stockShare.getQuantity();
+            totalValue += stockShare.getValue();
         }
         return totalValue;
     }

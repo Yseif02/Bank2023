@@ -24,6 +24,7 @@ public class SavingsAccount extends Account{
         }else{
             throw new IllegalArgumentException();
         }
+        transactions.add(tx);
     }
 
     /**

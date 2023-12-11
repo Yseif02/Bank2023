@@ -6,6 +6,7 @@ package edu.yu.cs.intro.bank2023;
 public class StockShares{
     private StockListing stock;
     private int quantity;
+    private double value;
 
     /**
      * @param listing the stock listing this instance is tracking the Patron's shares of
@@ -17,6 +18,10 @@ public class StockShares{
         }
         this.stock = listing;
         this.quantity = 0;
+        this.value = 0;
+    }
+    private void setValue(){
+        this.value = stock.getPrice() * quantity;
     }
 ;
     public int getQuantity() {
@@ -29,6 +34,11 @@ public class StockShares{
 
     public StockListing getListing() {
         return this.stock;
+    }
+
+    public double getValue(){
+        setValue();
+        return this.value;
     }
 
 }

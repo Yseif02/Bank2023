@@ -61,7 +61,7 @@ public class Patron {
      * @see BrokerageAccount#getValue()
      */
     public double getNetWorth(){
-        return this.savings.getValue() + this.brokerage.getValue();
+        return this.getSavingsAccount().getValue() + 1;
     }
     public SavingsAccount getSavingsAccount() {
       return this.savings;
