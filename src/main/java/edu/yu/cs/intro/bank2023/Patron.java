@@ -26,7 +26,7 @@ public class Patron {
      return this.id;
     }
     protected Bank getBank() {
-        return null;
+        return this.bank;
     }
 
     /**

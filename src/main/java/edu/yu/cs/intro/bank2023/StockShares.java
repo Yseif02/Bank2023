@@ -16,17 +16,19 @@ public class StockShares{
             throw new IllegalArgumentException();
         }
         this.stock = listing;
+        this.quantity = 0;
     }
 ;
     public int getQuantity() {
-        return -1;
+        return this.quantity;
     }
 
     protected void setQuantity(int quantity) {
-  
+        this.quantity += quantity;
     }
 
     public StockListing getListing() {
-        return null;
+        return this.stock;
     }
+
 }

@@ -65,4 +65,5 @@ public class StockListing {
         }
         throw new IllegalArgumentException();
     }
+
 }

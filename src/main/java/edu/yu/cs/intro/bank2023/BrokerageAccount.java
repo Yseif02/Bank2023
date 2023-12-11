@@ -42,7 +42,7 @@ public class BrokerageAccount extends Account{
      *         If he does have enough cash, do the following:
      *         1) reduce available share of StockListing by tx.getQuantity()
      *         2) reduce cash in patron's savings account by tx.getQuantity() * StockListing.getPrice()
-     *         3)  create a new StockShare for this stock with the quantity set to tx.getQuantity() and listing set to tx.getStock() (or increase StockShare quantity, if there already is a StockShare instance in this account, by tx.getQuantity())
+     *         3) create a new StockShare for this stock with the quantity set to tx.getQuantity() and listing set to tx.getStock() (or increase StockShare quantity, if there already is a StockShare instance in this account, by tx.getQuantity())
      *         4) add this to the set of transactions recorded in this account
      *
      * If tx.getType() is SELL, do the following:
@@ -65,7 +65,32 @@ public class BrokerageAccount extends Account{
                     throw new InsufficientAssetsException(tx, getPatron());
                 }else{
                     ((StockTransaction) tx).getStock().reduceAvailableShares(((StockTransaction) tx).getQuantity());
-                    getPatron().
+                    Transaction withdrawAmount = new CashTransaction(Transaction.TxType.WITHDRAW, totalCashNeeded);
+                    getPatron().getSavingsAccount().executeTransaction(withdrawAmount);
+                    if(sharesMap.containsKey(((StockTransaction) tx).getStock().getTickerSymbol())){
+                        for (StockShares stockShare:getListOfShares()) {
+                            if(stockShare.getListing().getTickerSymbol().equals(((StockTransaction) tx).getStock().getTickerSymbol())){
+                                stockShare.setQuantity(((StockTransaction) tx).getQuantity());
+                            }
+                        }
+                    }else{
+                        StockShares stockShare = new StockShares(((StockTransaction) tx).getStock());
+                        stockShare.setQuantity(((StockTransaction) tx).getQuantity());
+                        sharesMap.put(stockShare.getListing().getTickerSymbol(), stockShare);
+                    }
+                    transactions.add(tx);
+                }
+            }else if(tx.getType().equals(Transaction.TxType.SELL)){
+                for (StockShares stockShare:getListOfShares()) {
+                    if(stockShare.getListing().getTickerSymbol().equals(((StockTransaction) tx).getStock().getTickerSymbol())){
+                        if(((StockTransaction) tx).getQuantity() > stockShare.getListing().getAvailableShares()){
+                            throw new InsufficientAssetsException(tx, getPatron());
+                        }
+                        stockShare.getListing().reduceAvailableShares(((StockTransaction) tx).getQuantity());
+                        double revenueFromSale = ((StockTransaction) tx).getStock().getPrice() * ((StockTransaction) tx).getQuantity();
+                        Transaction depositRevenue = new CashTransaction(Transaction.TxType.DEPOSIT, revenueFromSale);
+                        getPatron().getSavingsAccount().executeTransaction(depositRevenue);
+                    }
                 }
             }
         }
@@ -81,6 +106,10 @@ public class BrokerageAccount extends Account{
      */
     @Override
     public double getValue() {
-        return -1;
+        double totalValue = 0;
+        for (StockShares stockShare:getListOfShares()) {
+            totalValue += stockShare.getListing().getPrice() * stockShare.getQuantity();
+        }
+        return totalValue;
     }
 }

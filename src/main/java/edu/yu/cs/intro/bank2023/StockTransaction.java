@@ -5,8 +5,8 @@ package edu.yu.cs.intro.bank2023;
 public class StockTransaction implements Transaction{
     private final StockListing listing;
     private final TxType type;
-    final int quantity;
-    final long nanoTimeStamp;
+    private final int quantity;
+    private final long nanoTimeStamp;
 
     /**
      *
