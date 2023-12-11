@@ -4,9 +4,9 @@ package edu.yu.cs.intro.bank2023;
  * A CashTransaction is immutable. Value of nanoTimeStamp must be set at time of construction to the return value of System.nanoTime().
  */
 public class CashTransaction implements Transaction{
-    private TxType type;
-    private double amount;
-    private long nanoTimeStamp;
+    final double amount;
+    final TxType type;
+    final long nanoTimeStamp;
 
     /**
      *
@@ -16,7 +16,7 @@ public class CashTransaction implements Transaction{
      */
     public CashTransaction(TxType type, double amount) throws InvalidTransactionException{
         this.nanoTimeStamp = System.nanoTime();
-        if((type.equals(TxType.DEPOSIT) || type.equals(TxType.DEPOSIT)) && amount > 0){
+        if((type.equals(TxType.WITHDRAW) || type.equals(TxType.DEPOSIT)) && amount > 0){
             this.type = type;
             this.amount = amount;
         }else{

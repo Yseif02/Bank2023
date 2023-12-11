@@ -4,7 +4,9 @@ package edu.yu.cs.intro.bank2023;
  * A patron (i.e. customer) of the bank, who can have up to 2 accounts - 1 savings account, 1 brokerage account.
  */
 public class Patron {
-    private int id;
+    private final int id;
+    private SavingsAccount savings;
+    private BrokerageAccount brokerage;
     private Bank bank;
 
     /**
@@ -24,7 +26,7 @@ public class Patron {
      return this.id;
     }
     protected Bank getBank() {
-        return this.bank;
+        return null;
     }
 
     /**
@@ -34,7 +36,10 @@ public class Patron {
      * @see Bank#openNewSavingsAccount(Patron)
      */
     protected void setSavingsAccount(SavingsAccount savings) throws ApplicationDeniedException{
-    
+        if(this.savings != null){
+            throw new ApplicationDeniedException("Patron already has a savings account");
+        }
+        this.savings = savings;
     }
 
     /**
@@ -44,7 +49,10 @@ public class Patron {
      * @see Bank#openNewBrokerageAccount(Patron)
      */
     protected void setBrokerageAccount(BrokerageAccount brokerage) throws ApplicationDeniedException{
- 
+        if(this.brokerage != null){
+            throw new ApplicationDeniedException("Patron already has a brokerage account");
+        }
+        this.brokerage = brokerage;
     }
 
     /**
@@ -53,12 +61,12 @@ public class Patron {
      * @see BrokerageAccount#getValue()
      */
     public double getNetWorth(){
-        return -1;
+        return this.savings.getValue() + this.brokerage.getValue();
     }
     public SavingsAccount getSavingsAccount() {
-      return null;
+      return this.savings;
     }
     public BrokerageAccount getBrokerageAccount() {
-        return null;
+        return this.brokerage;
     }
 }

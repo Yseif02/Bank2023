@@ -10,7 +10,7 @@ public class ApplicationDeniedException extends Exception{
      * @param message an informative message, describing why the application was denied
      */
     public ApplicationDeniedException(String message){
-
+        super(message);
     }
 
 }

@@ -4,7 +4,8 @@ package edu.yu.cs.intro.bank2023;
  * represents the quantity of shares a single Patron owns of single stock/listing
  */
 public class StockShares{
-    private StockListing listing;
+    private StockListing stock;
+    private int quantity;
 
     /**
      * @param listing the stock listing this instance is tracking the Patron's shares of
@@ -14,7 +15,7 @@ public class StockShares{
         if(listing == null){
             throw new IllegalArgumentException();
         }
-        this.listing = listing;
+        this.stock = listing;
     }
 ;
     public int getQuantity() {

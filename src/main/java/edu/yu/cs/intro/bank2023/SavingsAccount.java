@@ -1,10 +1,10 @@
 package edu.yu.cs.intro.bank2023;
 
-public class SavingsAccount extends Account implements Transaction{
+public class SavingsAccount extends Account{
+    private double balance;
    
     protected SavingsAccount(int accountNumber, Patron patron) {
         super(accountNumber, patron);
-
     }
 
     /**
@@ -17,7 +17,13 @@ public class SavingsAccount extends Account implements Transaction{
      */
     @Override
     public void executeTransaction(Transaction tx) {
-
+        if(tx.getType().equals(Transaction.TxType.DEPOSIT)){
+            balance += ((CashTransaction) tx).getAmount();
+        }else if(tx.getType().equals(Transaction.TxType.WITHDRAW)){
+            balance -= ((CashTransaction) tx).getAmount();
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -25,23 +31,6 @@ public class SavingsAccount extends Account implements Transaction{
      */
     @Override
     public double getValue() {
-        return -1;
-    }
-
-    /**
-     * @return which type of transaction is this?
-     */
-    @Override
-    public TxType getType() {
-        return null;
-    }
-
-    /**
-     * @return timestamp of transaction. Value of nanoTimeStamp must be set at time of construction to the return value of System.nanoTime()
-     * @see System#nanoTime()
-     */
-    @Override
-    public long getNanoTimestamp() {
-        return 0;
+        return this.balance;
     }
 }

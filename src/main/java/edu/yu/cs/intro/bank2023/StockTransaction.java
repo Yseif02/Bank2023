@@ -3,9 +3,10 @@ package edu.yu.cs.intro.bank2023;
  * A StockTransaction is immutable. Value of nanoTimeStamp must be set at time of construction to the return value of System.nanoTime().
  */
 public class StockTransaction implements Transaction{
-    private  StockListing listing;
-    private TxType type;
-    private int quantity;
+    private final StockListing listing;
+    private final TxType type;
+    final int quantity;
+    final long nanoTimeStamp;
 
     /**
      *
@@ -22,19 +23,20 @@ public class StockTransaction implements Transaction{
         }else{
             throw new InvalidTransactionException("Message", type);
         }
+        this.nanoTimeStamp = System.nanoTime();
     }
     public StockListing getStock(){
-        return listing;
+        return this.listing;
     }
     public int getQuantity(){
-      return quantity;
+      return this.quantity;
     }
     @Override
     public TxType getType() {
-        return type;
+        return this.type;
     }
     @Override
     public long getNanoTimestamp() {
-       return System.nanoTime();
+       return this.nanoTimeStamp;
     }
 }

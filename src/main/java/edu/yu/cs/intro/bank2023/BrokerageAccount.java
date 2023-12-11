@@ -1,11 +1,13 @@
 package edu.yu.cs.intro.bank2023;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Models a brokerage account, i.e. an account used to buy, sell, and own stocks
  */
-public class BrokerageAccount extends Account implements Transaction{
+public class BrokerageAccount extends Account{
+    private Map<String, StockShares> sharesMap;
+
 
 
     /**
@@ -16,7 +18,7 @@ public class BrokerageAccount extends Account implements Transaction{
      */
     protected BrokerageAccount(int accountNumber, Patron patron) {
         super(accountNumber, patron);
-
+        sharesMap = new HashMap<>();
     }
 
     /**
@@ -24,7 +26,11 @@ public class BrokerageAccount extends Account implements Transaction{
      * @see java.util.Collections#unmodifiableList(List)
      */
     public List<StockShares> getListOfShares(){
-        return null;
+        List<StockShares> stockShares = new ArrayList<>();
+        for(StockShares shares:sharesMap.values()){
+            stockShares.add(shares);
+        }
+        return Collections.unmodifiableList(stockShares);
     }
 
     /**
@@ -49,7 +55,23 @@ public class BrokerageAccount extends Account implements Transaction{
      */
     @Override
     public void executeTransaction(Transaction tx) throws InsufficientAssetsException,InvalidTransactionException {
-
+        double totalCashNeeded = ((StockTransaction) tx).getQuantity() * ((StockTransaction) tx).getStock().getPrice();
+        if(tx instanceof StockTransaction){
+            if(tx.getType().equals(Transaction.TxType.BUY)){
+                if(((StockTransaction) tx).getStock().getAvailableShares() < ((StockTransaction) tx).getQuantity()){
+                    throw new InvalidTransactionException("Not enough available shares for purchase", tx.getType());
+                }
+                if(totalCashNeeded > getPatron().getSavingsAccount().getValue()){
+                    throw new InsufficientAssetsException(tx, getPatron());
+                }else{
+                    ((StockTransaction) tx).getStock().reduceAvailableShares(((StockTransaction) tx).getQuantity());
+                    getPatron().
+                }
+            }
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -60,22 +82,5 @@ public class BrokerageAccount extends Account implements Transaction{
     @Override
     public double getValue() {
         return -1;
-    }
-
-    /**
-     * @return which type of transaction is this?
-     */
-    @Override
-    public TxType getType() {
-        return null;
-    }
-
-    /**
-     * @return timestamp of transaction. Value of nanoTimeStamp must be set at time of construction to the return value of System.nanoTime()
-     * @see System#nanoTime()
-     */
-    @Override
-    public long getNanoTimestamp() {
-        return 0;
     }
 }

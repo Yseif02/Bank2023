@@ -4,17 +4,21 @@ import java.util.*;
 
 public class Bank {
     private StockExchange exchange;
-    HashSet<Patron> patrons = new HashSet<>();
+    private Set<Account> accounts = new HashSet<>();
+    private HashSet<Patron> patrons = new HashSet<>();
+    private int nextId;
+
 
     /**
      * @param exchange the stock exchange on which all stock are listed
      * @throws IllegalArgumentException if exchange is null
      */
     protected Bank(StockExchange exchange){
-        if(exchange != null){
-            this.exchange = exchange;
+        if(exchange == null){
+            throw new IllegalArgumentException();
         }
-        throw new IllegalArgumentException();
+        this.exchange = exchange;
+        this.nextId = 0;
     }
     /**
      * Create a new Patron whose ID is the next unique available Patron ID and whose Bank is set to this bank.
@@ -23,7 +27,9 @@ public class Bank {
      * @return a new Patron with a unique ID, but no accounts
      */
     public Patron createNewPatron(){
-        return null;
+        Patron patron = new Patron(nextId++, this);
+        patrons.add(patron);
+        return patron;
     }
 
     /**
@@ -37,7 +43,11 @@ public class Bank {
      * @throws IllegalArgumentException if p is null
      */
     public int openNewSavingsAccount(Patron p) throws ApplicationDeniedException{
-        return -1;
+        int id = nextId++;
+        SavingsAccount savings = new SavingsAccount(id, p);
+        p.setSavingsAccount(savings);
+        accounts.add(savings);
+        return id;
     }
 
     /**
@@ -51,7 +61,11 @@ public class Bank {
      * @throws IllegalArgumentException if p is null
      */
     public int openNewBrokerageAccount(Patron p)throws ApplicationDeniedException{
-        return -1;
+        int id = nextId++;
+        BrokerageAccount brokerage = new BrokerageAccount(id, p);
+        p.setBrokerageAccount(brokerage);
+        accounts.add(brokerage);
+        return id;
     }
 
     /**
@@ -60,7 +74,7 @@ public class Bank {
      * @see java.util.Collections#unmodifiableSet(Set)
      */
     protected Set<Account> getAllAccounts() {
-        return null;
+        return Collections.unmodifiableSet(accounts);
     }
 
     /**
@@ -69,13 +83,13 @@ public class Bank {
      * @see java.util.Collections#unmodifiableSet(Set)
      */
     protected Set<Patron> getAllPatrons() {
-        return null;
+        return Collections.unmodifiableSet(patrons);
     }
 
     /**
      * @return the exchange used by this Bank
      */
     protected StockExchange getExchange() {
-        return null;
+        return this.exchange;
     }
 }

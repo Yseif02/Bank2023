@@ -4,9 +4,9 @@ package edu.yu.cs.intro.bank2023;
  * represents the stock of a single company that is listed on the StockExchange
  */
 public class StockListing {
-    private String tickerSymbol;
-    private double initialPrice;
     private int availableShares;
+    private double price;
+    private String tickerSymbol;
 
     /**
      *
@@ -16,11 +16,11 @@ public class StockListing {
      * @throws IllegalArgumentException if the tickerSymbol is null or empty, if the initial price is <= 0, of if availableShares <= 0
      */
     protected StockListing(String tickerSymbol, double initialPrice, int availableShares){
-        if(tickerSymbol == null || initialPrice < 1 || availableShares < 1){
+        if(tickerSymbol == null || tickerSymbol.length() < 1 || initialPrice < 1 || availableShares < 1){
             throw new IllegalArgumentException();
         }
         this.tickerSymbol = tickerSymbol;
-        this.initialPrice = initialPrice;
+        this.price = initialPrice;
         this.availableShares = availableShares;
     }
 
@@ -28,7 +28,7 @@ public class StockListing {
         return this.tickerSymbol;
     }
     public double getPrice() {
-      return this.initialPrice;
+      return this.price;
     }
     public int getAvailableShares() {
        return this.availableShares;
@@ -39,7 +39,7 @@ public class StockListing {
      * @param price
      */
     protected void setPrice(double price) {
-
+        this.price = price;
     }
     /**
      * increase the number of shares available
@@ -48,7 +48,10 @@ public class StockListing {
      * @throws IllegalArgumentException if availableShares <= 0
      */
     protected int addAvailableShares(int availableShares) {
-        return -1;
+        if(availableShares > 0) {
+            return availableShares + availableShares;
+        }
+        throw new IllegalArgumentException();
     }
     /**
      * reduce the number of shares available
@@ -57,6 +60,9 @@ public class StockListing {
      * @throws IllegalArgumentException if quantityToSubtract > the number of available shares
      */
     protected int reduceAvailableShares(int quantityToSubtract){
-        return -1;
+        if(quantityToSubtract < availableShares) {
+            return availableShares - quantityToSubtract;
+        }
+        throw new IllegalArgumentException();
     }
 }

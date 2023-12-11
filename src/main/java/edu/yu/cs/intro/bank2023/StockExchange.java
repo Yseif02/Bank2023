@@ -1,10 +1,10 @@
 package edu.yu.cs.intro.bank2023;
-import java.util.List;
+import java.util.*;
 
 public class StockExchange {
-
+    private Map<String, StockListing> stocks;
     protected StockExchange(){
-    
+        stocks = new HashMap<>();
     }
 
     /**
@@ -15,7 +15,11 @@ public class StockExchange {
      * @throws IllegalArgumentException if there's already a listing with that tickerSymbol
      */
     public void createNewListing(String tickerSymbol, double initialPrice, int availableShares){
-
+        if(stocks.containsKey(tickerSymbol)) {
+            throw new IllegalArgumentException();
+        }
+        StockListing stockListing = new StockListing(tickerSymbol, initialPrice, availableShares);
+        stocks.put(tickerSymbol, stockListing);
     }
 
     /**
@@ -23,14 +27,17 @@ public class StockExchange {
      * @return the StockListing object for the given tickerSymbol, or null if there is none
      */
     public StockListing getStockListing(String tickerSymbol){
-        return null;
+       if(stocks.containsKey(tickerSymbol)){
+           return stocks.get(tickerSymbol);
+       }
+       return null;
     }
 
     /**
-     * @return an umodifiable list of all the StockListings currently found on this exchange
+     * @return an unmodifiable list of all the StockListings currently found on this exchange
      * @see java.util.Collections#unmodifiableList(List)
      */
     public List<StockListing> getAllCurrentListings(){
-        return null;
+        return List.copyOf(stocks.values());
     }
 }
