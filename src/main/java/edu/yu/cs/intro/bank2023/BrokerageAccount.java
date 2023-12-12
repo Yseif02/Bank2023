@@ -55,9 +55,9 @@ public class BrokerageAccount extends Account{
      */
     @Override
     public void executeTransaction(Transaction tx) throws InsufficientAssetsException,InvalidTransactionException {
-        double totalCashNeeded = ((StockTransaction) tx).getQuantity() * ((StockTransaction) tx).getStock().getPrice();
         if(tx instanceof StockTransaction){
             if(tx.getType().equals(Transaction.TxType.BUY)){
+                double totalCashNeeded = ((StockTransaction) tx).getQuantity() * ((StockTransaction) tx).getStock().getPrice();
                 if(((StockTransaction) tx).getStock().getAvailableShares() < ((StockTransaction) tx).getQuantity()){
                     throw new InvalidTransactionException("Not enough available shares for purchase", tx.getType());
                 }

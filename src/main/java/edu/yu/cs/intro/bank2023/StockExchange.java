@@ -23,7 +23,7 @@ public class StockExchange {
     }
 
     /**
-     * @param tickerSymbol
+     * @param tickerSymbol the stocks tickerSymbol
      * @return the StockListing object for the given tickerSymbol, or null if there is none
      */
     public StockListing getStockListing(String tickerSymbol){

@@ -49,7 +49,8 @@ public class StockListing {
      */
     protected int addAvailableShares(int availableShares) {
         if(availableShares > 0) {
-            return availableShares + availableShares;
+            this.availableShares += availableShares;
+            return this.availableShares;
         }
         throw new IllegalArgumentException();
     }
@@ -60,8 +61,9 @@ public class StockListing {
      * @throws IllegalArgumentException if quantityToSubtract > the number of available shares
      */
     protected int reduceAvailableShares(int quantityToSubtract){
-        if(quantityToSubtract < availableShares) {
-            return availableShares - quantityToSubtract;
+        if(quantityToSubtract < this.availableShares) {
+            this.availableShares -= quantityToSubtract;
+            return this.availableShares;
         }
         throw new IllegalArgumentException();
     }
