@@ -6,7 +6,7 @@ import java.util.*;
  * Models a brokerage account, i.e. an account used to buy, sell, and own stocks
  */
 public class BrokerageAccount extends Account{
-    private Map<String, StockShares> sharesMap;
+    protected Map<String, StockShares> sharesMap;
 
 
 
@@ -77,11 +77,18 @@ public class BrokerageAccount extends Account{
                         StockShares stockShare = new StockShares(((StockTransaction) tx).getStock());
                         stockShare.setQuantity(((StockTransaction) tx).getQuantity());
                         sharesMap.put(stockShare.getListing().getTickerSymbol(), stockShare);
+                        for (StockShares listing:getListOfShares()) {
+                            //System.out.println(listing.getListing());
+                        }
                     }
                     transactions.add(tx);
                 }
             }else if(tx.getType().equals(Transaction.TxType.SELL)){
-                for (StockShares stockShare:getListOfShares()) {
+                if(!sharesMap.containsKey(((StockTransaction) tx).getStock().getTickerSymbol())){
+                    //System.out.println("print");
+                    throw new InsufficientAssetsException(tx, getPatron());
+                }
+                 for (StockShares stockShare:getListOfShares()) {
                     if(stockShare.getListing().getTickerSymbol().equals(((StockTransaction) tx).getStock().getTickerSymbol())){
                         if(((StockTransaction) tx).getQuantity() > stockShare.getListing().getAvailableShares()){
                             throw new InsufficientAssetsException(tx, getPatron());
@@ -89,7 +96,12 @@ public class BrokerageAccount extends Account{
                         stockShare.getListing().reduceAvailableShares(((StockTransaction) tx).getQuantity());
                         double revenueFromSale = ((StockTransaction) tx).getStock().getPrice() * ((StockTransaction) tx).getQuantity();
                         Transaction depositRevenue = new CashTransaction(Transaction.TxType.DEPOSIT, revenueFromSale);
+                        sharesMap.get(((StockTransaction) tx).getStock().getTickerSymbol()).setQuantity(-((StockTransaction) tx).getQuantity());
                         getPatron().getSavingsAccount().executeTransaction(depositRevenue);
+                        transactions.add(tx);
+                        return;
+                    }else{
+                        throw new InsufficientAssetsException(tx, getPatron());
                     }
                 }
             }

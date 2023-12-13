@@ -62,7 +62,9 @@ public class StockListing {
      */
     protected int reduceAvailableShares(int quantityToSubtract){
         if(quantityToSubtract < this.availableShares) {
+            //System.out.println("Stock Symbol " + this.tickerSymbol + " Amount of shares " + this.availableShares);
             this.availableShares -= quantityToSubtract;
+            //System.out.println("Stock Symbol " + this.tickerSymbol + " Amount of shares " + this.availableShares);
             return this.availableShares;
         }
         throw new IllegalArgumentException();

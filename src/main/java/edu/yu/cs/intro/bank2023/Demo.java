@@ -17,13 +17,19 @@ public class Demo {
         assert(listing.getAvailableShares() == 1000);
         assert(listing.getPrice() == 10);
 
+        exchange.createNewListing("AAPL", 40, 200);
+        listing = exchange.getStockListing("AAPL");
+        assert(listing != null);
+        assert(listing.getAvailableShares() == 200);
+        assert(listing.getPrice() == 40);
+
         exchange.createNewListing("GOOG",50,10);
         listing = exchange.getStockListing("GOOG");
         assert(listing != null);
         assert(listing.getAvailableShares() == 10);
         assert(listing.getPrice() == 50);
 
-        exchange.createNewListing("AMZN",100,10);
+        exchange.createNewListing("AMZN",100,50);
         listing = exchange.getStockListing("AMZN");
         assert(listing != null);
         assert(listing.getAvailableShares() == 10);
@@ -51,7 +57,7 @@ public class Demo {
         BrokerageAccount ba = gvir.getBrokerageAccount();
         //give the gvir some cash in his savings account
         try {
-            gvir.getSavingsAccount().executeTransaction(new CashTransaction(Transaction.TxType.DEPOSIT,1000));
+            gvir.getSavingsAccount().executeTransaction(new CashTransaction(Transaction.TxType.DEPOSIT,10000));
         } catch (InvalidTransactionException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -62,7 +68,14 @@ public class Demo {
             ba.executeTransaction(new StockTransaction(exchange.getStockListing("IBM"), Transaction.TxType.BUY,1));
             ba.executeTransaction(new StockTransaction(exchange.getStockListing("GOOG"), Transaction.TxType.BUY,2));
             ba.executeTransaction(new StockTransaction(exchange.getStockListing("AMZN"), Transaction.TxType.BUY,5));
-            System.out.println("Patron ID " + gvir.getId() + " bought 1 share of IBM, 2 shares of GOOG, and 5 shares of AMZN");
+            ba.executeTransaction(new StockTransaction(exchange.getStockListing("AAPL"), Transaction.TxType.BUY, 3));
+            ba.executeTransaction(new StockTransaction(exchange.getStockListing("IBM"), Transaction.TxType.BUY, 1));
+            System.out.println(gvir.getSavingsAccount().getValue());
+            System.out.println(gvir.getBrokerageAccount().sharesMap.get("GOOG").getQuantity());
+            ba.executeTransaction(new StockTransaction(exchange.getStockListing("GOOG"), Transaction.TxType.SELL, 1));
+            System.out.println(gvir.getBrokerageAccount().sharesMap.get("GOOG").getQuantity());
+            System.out.println(gvir.getSavingsAccount().getValue());
+            System.out.println("Patron ID " + gvir.getId() + " bought 2 shares of IBM, 2 shares of GOOG, 5 shares of AMZN, and 3 shares of AAPL");
         } catch (InsufficientAssetsException e) {
             throw new RuntimeException(e);
         } catch (InvalidTransactionException e) {
@@ -72,6 +85,7 @@ public class Demo {
 
         //try to buy stock but fail due to insufficient assets
         try {
+            //this line has a problem
             ba.executeTransaction(new StockTransaction(exchange.getStockListing("IBM"), Transaction.TxType.BUY,100));
         } catch (InsufficientAssetsException e) {
             //taking advantage of fluent interface sytle: https://en.wikipedia.org/wiki/Fluent_interface
@@ -95,16 +109,40 @@ public class Demo {
         } catch (ApplicationDeniedException e) {
             throw new RuntimeException(e);
         }
+
         SavingsAccount savings = patron.getSavingsAccount();
+        try {
+            bank.openNewBrokerageAccount(patron);
+        }catch (ApplicationDeniedException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        BrokerageAccount brokerage = patron.getBrokerageAccount();
         try {
             savings.executeTransaction(new CashTransaction(Transaction.TxType.DEPOSIT,500));
             savings.executeTransaction(new CashTransaction(Transaction.TxType.DEPOSIT,500));
             savings.executeTransaction(new CashTransaction(Transaction.TxType.WITHDRAW,800));
             savings.executeTransaction(new CashTransaction(Transaction.TxType.DEPOSIT,573));
+            System.out.println("here");
+            brokerage.executeTransaction(new StockTransaction(exchange.getStockListing("IBM"), Transaction.TxType.BUY, 10));
+            brokerage.executeTransaction(new StockTransaction(exchange.getStockListing("IBM"), Transaction.TxType.SELL, 10));
+        }catch (InsufficientAssetsException e) {
+            throw new RuntimeException(e);
         } catch (InvalidTransactionException e) {
             throw new RuntimeException(e);
         }
+        Patron test = bank.createNewPatron();
+        test.getNetWorth();
+        this.printOutStockExchangeInformation(exchange);
         this.printOutPatronInformation(patron);
+        /*try{
+            ba.executeTransaction(new StockTransaction(exchange.getStockListing("AMZN"), Transaction.TxType.BUY, 20));
+        }catch (InsufficientAssetsException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidTransactionException e) {
+            throw new RuntimeException(e);
+        }*/
+        this.printOutPatronInformation(gvir);
 
         //change prices of some stocks
         for(StockListing stock : exchange.getAllCurrentListings()) {

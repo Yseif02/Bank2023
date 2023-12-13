@@ -49,8 +49,8 @@ public class Patron {
      * @see Bank#openNewBrokerageAccount(Patron)
      */
     protected void setBrokerageAccount(BrokerageAccount brokerage) throws ApplicationDeniedException{
-        if(this.brokerage != null){
-            throw new ApplicationDeniedException("Patron already has a brokerage account");
+        if(this.brokerage != null || this.savings == null){
+            throw new ApplicationDeniedException("Patron already has a brokerage account or doesn't have a savings account");
         }
         this.brokerage = brokerage;
     }
@@ -61,7 +61,12 @@ public class Patron {
      * @see BrokerageAccount#getValue()
      */
     public double getNetWorth(){
-        return this.getSavingsAccount().getValue() + 1;
+        if(this.savings == null){
+            return 0;
+        } else if (this.brokerage == null) {
+            return this.getSavingsAccount().getValue();
+        }
+        return this.getSavingsAccount().getValue() + this.getBrokerageAccount().getValue();
     }
     public SavingsAccount getSavingsAccount() {
       return this.savings;
