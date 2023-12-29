@@ -1,8 +1,8 @@
 package edu.yu.cs.intro.bank2023;
 
 public class InsufficientAssetsException extends Exception{
-    final Transaction tx;
-    final Patron p;
+    private final Transaction tx;
+    private final Patron p;
 
     public InsufficientAssetsException(Transaction tx, Patron p){
         this.tx = tx;

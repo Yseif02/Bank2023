@@ -44,6 +44,12 @@ public class Bank {
      */
     public int openNewSavingsAccount(Patron p) throws ApplicationDeniedException{
         int id = nextId++;
+        if(p == null){
+            throw new IllegalArgumentException();
+        }
+        if(p.getSavingsAccount() != null){
+            throw new ApplicationDeniedException("Patron already has a savings account");
+        }
         SavingsAccount savings = new SavingsAccount(id, p);
         p.setSavingsAccount(savings);
         accounts.add(savings);
@@ -62,6 +68,12 @@ public class Bank {
      */
     public int openNewBrokerageAccount(Patron p)throws ApplicationDeniedException{
         int id = nextId++;
+        if(p == null){
+            throw new IllegalArgumentException();
+        }
+        if(p.getBrokerageAccount() != null){
+            throw new ApplicationDeniedException("Patron already has a brokerage account or doesn't have a savings account");
+        }
         BrokerageAccount brokerage = new BrokerageAccount(id, p);
         p.setBrokerageAccount(brokerage);
         accounts.add(brokerage);

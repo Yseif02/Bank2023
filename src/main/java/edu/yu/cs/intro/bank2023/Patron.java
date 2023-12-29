@@ -21,6 +21,8 @@ public class Patron {
     protected Patron(int id, Bank bank){
      this.id = id;
      this.bank = bank;
+     this.savings = null;
+     this.brokerage = null;
     }
     public int getId() {
      return this.id;

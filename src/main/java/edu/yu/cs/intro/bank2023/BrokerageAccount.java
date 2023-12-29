@@ -6,7 +6,7 @@ import java.util.*;
  * Models a brokerage account, i.e. an account used to buy, sell, and own stocks
  */
 public class BrokerageAccount extends Account{
-    protected Map<String, StockShares> sharesMap;
+    private Map<String, StockShares> sharesMap;
 
 
 
@@ -26,15 +26,12 @@ public class BrokerageAccount extends Account{
      * @see java.util.Collections#unmodifiableList(List)
      */
     public List<StockShares> getListOfShares(){
-        List<StockShares> stockShares = new ArrayList<>();
-        for(StockShares shares:sharesMap.values()){
-            stockShares.add(shares);
-        }
+        List<StockShares> stockShares = new ArrayList<>(sharesMap.values());
         return Collections.unmodifiableList(stockShares);
     }
 
     /**
-     * If the transaction is not an instanceof StockTransaction, throw an IllegalArgumentException.
+     * If the transaction is not an instanceof StockTransaction, throw an InvalidTransactionException.
      *
      * If tx.getType() is BUY, do the following:
      *         If there aren't enough shares of the stock available for purchase, throw an InvalidTransactionException.
@@ -77,15 +74,11 @@ public class BrokerageAccount extends Account{
                         StockShares stockShare = new StockShares(((StockTransaction) tx).getStock());
                         stockShare.setQuantity(((StockTransaction) tx).getQuantity());
                         sharesMap.put(stockShare.getListing().getTickerSymbol(), stockShare);
-                        for (StockShares listing:getListOfShares()) {
-                            //System.out.println(listing.getListing());
-                        }
                     }
-                    transactions.add(tx);
+                    this.transactions.add(tx);
                 }
             }else if(tx.getType().equals(Transaction.TxType.SELL)){
                 if(!sharesMap.containsKey(((StockTransaction) tx).getStock().getTickerSymbol())){
-                    //System.out.println("print");
                     throw new InsufficientAssetsException(tx, getPatron());
                 }
                  for (StockShares stockShare:getListOfShares()) {
@@ -98,7 +91,7 @@ public class BrokerageAccount extends Account{
                         Transaction depositRevenue = new CashTransaction(Transaction.TxType.DEPOSIT, revenueFromSale);
                         sharesMap.get(((StockTransaction) tx).getStock().getTickerSymbol()).setQuantity(-((StockTransaction) tx).getQuantity());
                         getPatron().getSavingsAccount().executeTransaction(depositRevenue);
-                        transactions.add(tx);
+                        this.transactions.add(tx);
                         return;
                     }else{
                         throw new InsufficientAssetsException(tx, getPatron());
@@ -107,14 +100,14 @@ public class BrokerageAccount extends Account{
             }
         }
         else{
-            throw new IllegalArgumentException();
+            throw new InvalidTransactionException("Wrong type of transaction", tx.getType());
         }
     }
 
     /**
      * the value of a BrokerageAccount is calculated by adding up the values of each StockShare.
      * The value of a StockShare is calculated by multiplying the StockShare quantity by its listing's price.
-     * @return
+     * @return the total value
      */
     @Override
     public double getValue() {

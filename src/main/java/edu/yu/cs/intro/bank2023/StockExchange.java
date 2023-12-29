@@ -16,7 +16,7 @@ public class StockExchange {
      */
     public void createNewListing(String tickerSymbol, double initialPrice, int availableShares){
         if(stocks.containsKey(tickerSymbol)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Stock exchange already contains this listing");
         }
         StockListing stockListing = new StockListing(tickerSymbol, initialPrice, availableShares);
         stocks.put(tickerSymbol, stockListing);

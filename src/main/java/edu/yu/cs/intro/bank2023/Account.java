@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * the account number, patron, and transaction history MUST be stored in instance variables of Account, NOT in other classes or subclasses.
  */
-public abstract class Account{
+public abstract class Account {
     private final int accountNumber;
     private final Patron patron;
     protected List<Transaction> transactions;
