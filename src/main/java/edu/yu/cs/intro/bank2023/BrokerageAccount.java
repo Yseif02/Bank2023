@@ -52,57 +52,61 @@ public class BrokerageAccount extends Account{
      */
     @Override
     public void executeTransaction(Transaction tx) throws InsufficientAssetsException,InvalidTransactionException {
-        if(tx instanceof StockTransaction){
-            if(tx.getType().equals(Transaction.TxType.BUY)){
-                double totalCashNeeded = ((StockTransaction) tx).getQuantity() * ((StockTransaction) tx).getStock().getPrice();
-                if(((StockTransaction) tx).getStock().getAvailableShares() < ((StockTransaction) tx).getQuantity()){
-                    throw new InvalidTransactionException("Not enough available shares for purchase", tx.getType());
-                }
-                if(totalCashNeeded > getPatron().getSavingsAccount().getValue()){
-                    throw new InsufficientAssetsException(tx, getPatron());
-                }else{
-                    ((StockTransaction) tx).getStock().reduceAvailableShares(((StockTransaction) tx).getQuantity());
-                    Transaction withdrawAmount = new CashTransaction(Transaction.TxType.WITHDRAW, totalCashNeeded);
-                    getPatron().getSavingsAccount().executeTransaction(withdrawAmount);
-                    if(sharesMap.containsKey(((StockTransaction) tx).getStock().getTickerSymbol())){
-                        for (StockShares stockShare:getListOfShares()) {
-                            if(stockShare.getListing().getTickerSymbol().equals(((StockTransaction) tx).getStock().getTickerSymbol())){
-                                stockShare.setQuantity(((StockTransaction) tx).getQuantity());
-                            }
-                        }
-                    }else{
-                        StockShares stockShare = new StockShares(((StockTransaction) tx).getStock());
-                        stockShare.setQuantity(((StockTransaction) tx).getQuantity());
-                        sharesMap.put(stockShare.getListing().getTickerSymbol(), stockShare);
-                    }
-                    this.transactions.add(tx);
-                }
-            }else if(tx.getType().equals(Transaction.TxType.SELL)){
-                if(!sharesMap.containsKey(((StockTransaction) tx).getStock().getTickerSymbol())){
-                    throw new InsufficientAssetsException(tx, getPatron());
-                }
-                 for (StockShares stockShare:getListOfShares()) {
-                    if(stockShare.getListing().getTickerSymbol().equals(((StockTransaction) tx).getStock().getTickerSymbol())){
-                        if(((StockTransaction) tx).getQuantity() > stockShare.getListing().getAvailableShares()){
-                            throw new InsufficientAssetsException(tx, getPatron());
-                        }
-                        stockShare.getListing().reduceAvailableShares(((StockTransaction) tx).getQuantity());
-                        double revenueFromSale = ((StockTransaction) tx).getStock().getPrice() * ((StockTransaction) tx).getQuantity();
-                        Transaction depositRevenue = new CashTransaction(Transaction.TxType.DEPOSIT, revenueFromSale);
-                        sharesMap.get(((StockTransaction) tx).getStock().getTickerSymbol()).setQuantity(-((StockTransaction) tx).getQuantity());
-                        getPatron().getSavingsAccount().executeTransaction(depositRevenue);
-                        this.transactions.add(tx);
-                        return;
-                    }else{
-                        throw new InsufficientAssetsException(tx, getPatron());
-                    }
-                }
-            }
-        }
-        else{
+        if(!(tx instanceof StockTransaction)){
             throw new InvalidTransactionException("Wrong type of transaction", tx.getType());
         }
+        StockTransaction stockTx = (StockTransaction) tx;
+        if(tx.getType().equals(Transaction.TxType.BUY)){
+            double totalCashNeeded = stockTx.getQuantity() * stockTx.getStock().getPrice();
+            if(stockTx.getStock().getAvailableShares() < stockTx.getQuantity()){
+                throw new InvalidTransactionException("Not enough available shares for purchase", tx.getType());
+            }
+            if(totalCashNeeded > getPatron().getSavingsAccount().getValue()){
+                throw new InsufficientAssetsException(tx, getPatron());
+            }
+            stockTx.getStock().reduceAvailableShares(stockTx.getQuantity());
+            Transaction withdrawAmount = new CashTransaction(Transaction.TxType.WITHDRAW, totalCashNeeded);
+            getPatron().getSavingsAccount().executeTransaction(withdrawAmount);
+            if(sharesMap.containsKey(stockTx.getStock().getTickerSymbol())){
+                for (StockShares stockShare:getListOfShares()) {
+                    if(stockShare.getListing().getTickerSymbol().equals(stockTx.getStock().getTickerSymbol())){
+                        //stockShare.setQuantity(stockTx.getQuantity());
+                        stockShare = sharesMap.get(stockTx.getStock().getTickerSymbol());
+                        stockShare.setQuantity(stockShare.getQuantity() + stockTx.getQuantity());
+                    }
+                }
+            }else{
+                StockShares stockShares = new StockShares(stockTx.getStock());
+                stockShares.setQuantity(stockTx.getQuantity());
+                sharesMap.put(stockShares.getListing().getTickerSymbol(), stockShares);
+            }
+            this.transactions.add(stockTx);
+        }else {
+            if(!(sharesMap.containsKey(stockTx.getStock().getTickerSymbol()))){
+                throw new InsufficientAssetsException(tx, getPatron());
+            }
+            for (StockShares stockShare:getListOfShares()) {
+                if(stockShare.getListing().getTickerSymbol().equals(stockTx.getStock().getTickerSymbol())){
+                    if(stockTx.getQuantity() > stockShare.getListing().getAvailableShares()){
+                        throw new InsufficientAssetsException(tx, getPatron());
+                    }
+                    stockShare.getListing().reduceAvailableShares(stockTx.getQuantity());
+                    double revenueFromSale = stockTx.getStock().getPrice() * stockTx.getQuantity();
+                    Transaction depositRevenue = new CashTransaction(Transaction.TxType.DEPOSIT, revenueFromSale);
+                    sharesMap.get(stockTx.getStock().getTickerSymbol()).setQuantity(-stockTx.getQuantity());
+                    getPatron().getSavingsAccount().executeTransaction(depositRevenue);
+                    this.transactions.add(stockTx);
+                    return;
+                }
+            }
+            throw new InsufficientAssetsException(tx, getPatron());
+        }
+        for(Transaction transaction:transactions){
+            System.out.println(transaction.getType());
+            System.out.println(transactions);
+        }
     }
+
 
     /**
      * the value of a BrokerageAccount is calculated by adding up the values of each StockShare.

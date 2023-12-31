@@ -17,14 +17,15 @@ public class SavingsAccount extends Account{
      */
     @Override
     public void executeTransaction(Transaction tx) throws InsufficientAssetsException,InvalidTransactionException {
+        CashTransaction cashTx = (CashTransaction) tx;
         if(tx.getType().equals(Transaction.TxType.DEPOSIT)){
-            balance += ((CashTransaction) tx).getAmount();
+            balance += cashTx.getAmount();
         }else if(tx.getType().equals(Transaction.TxType.WITHDRAW)){
-            balance -= ((CashTransaction) tx).getAmount();
+            balance -= cashTx.getAmount();
         }else{
             throw new InvalidTransactionException("Wrong type of transaction", tx.getType());
         }
-        transactions.add(tx);
+        transactions.add(cashTx);
     }
 
     /**
