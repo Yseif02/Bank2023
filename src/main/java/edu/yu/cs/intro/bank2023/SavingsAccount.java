@@ -17,15 +17,38 @@ public class SavingsAccount extends Account{
      */
     @Override
     public void executeTransaction(Transaction tx) throws InsufficientAssetsException,InvalidTransactionException {
-        CashTransaction cashTx = (CashTransaction) tx;
-        if(tx.getType().equals(Transaction.TxType.DEPOSIT)){
-            balance += cashTx.getAmount();
-        }else if(tx.getType().equals(Transaction.TxType.WITHDRAW)){
-            balance -= cashTx.getAmount();
+        if(tx instanceof CashTransaction) {
+            CashTransaction cashTx = (CashTransaction) tx;
+            if (tx.getType().equals(Transaction.TxType.DEPOSIT)) {
+                balance += cashTx.getAmount();
+            } else if (tx.getType().equals(Transaction.TxType.WITHDRAW)) {
+                balance -= cashTx.getAmount();
+            }
+            transactions.add(cashTx);
+        } else if(tx instanceof CashTransfer) {
+            CashTransfer cashTransfer = (CashTransfer) tx;
+            SavingsAccount destinationAccount = null;
+            boolean foundAccount = false;
+            for(Account account:getPatron().getBank().getAllAccounts()){
+                if (account.getAccountNumber() == cashTransfer.getDestinationAccountID()){
+                    try {
+                        destinationAccount = (SavingsAccount) account;
+                        foundAccount = true;
+                    }catch (Exception e){
+                        throw new InvalidTransactionException("Destinaton account is not a savings account", cashTransfer.getType());
+                    }
+                }
+            }
+            if(!foundAccount) {
+                throw new InvalidTransactionException("Destination account not found", cashTransfer.getType());
+            }
+            SavingsAccount originAccount = getPatron().getSavingsAccount();
+            originAccount.executeTransaction(new CashTransaction(Transaction.TxType.WITHDRAW, cashTransfer.getAmount()));
+            destinationAccount.executeTransaction(new CashTransaction(Transaction.TxType.DEPOSIT, cashTransfer.getAmount()));
+            this.transactions.add(cashTransfer);
         }else{
             throw new InvalidTransactionException("Wrong type of transaction", tx.getType());
         }
-        transactions.add(cashTx);
     }
 
     /**
@@ -35,4 +58,6 @@ public class SavingsAccount extends Account{
     public double getValue() {
         return this.balance;
     }
+
+
 }

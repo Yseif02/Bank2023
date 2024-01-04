@@ -6,6 +6,7 @@ public class Bank {
     private StockExchange exchange;
     private Set<Account> accounts = new HashSet<>();
     private HashSet<Patron> patrons = new HashSet<>();
+    private Map<Patron, String> accountNames = new HashMap<>();
     private int nextId;
 
 
@@ -18,7 +19,7 @@ public class Bank {
             throw new IllegalArgumentException();
         }
         this.exchange = exchange;
-        this.nextId = 0;
+        this.nextId = 1;
     }
     /**
      * Create a new Patron whose ID is the next unique available Patron ID and whose Bank is set to this bank.
@@ -26,9 +27,10 @@ public class Bank {
      * No two Patrons can have the same ID. Each ID which is assigned should be greater than the previous ID.
      * @return a new Patron with a unique ID, but no accounts
      */
-    public Patron createNewPatron(){
-        Patron patron = new Patron(nextId++, this);
+    public Patron createNewPatron(String name){
+        Patron patron = new Patron(nextId++, this, name);
         patrons.add(patron);
+        accountNames.put(patron, name);
         return patron;
     }
 

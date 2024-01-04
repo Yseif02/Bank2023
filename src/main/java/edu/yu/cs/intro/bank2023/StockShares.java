@@ -32,6 +32,10 @@ public class StockShares{
         this.quantity += quantity;
     }
 
+    protected void executeTransfer(int quantity){
+        this.quantity -= quantity;
+    }
+
     public StockListing getListing() {
         return this.stock;
     }

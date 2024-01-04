@@ -25,6 +25,8 @@ public class StockTransaction implements Transaction{
         }
         this.nanoTimeStamp = System.nanoTime();
     }
+
+
     public StockListing getStock(){
         return this.listing;
     }

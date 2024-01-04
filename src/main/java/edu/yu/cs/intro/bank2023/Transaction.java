@@ -7,7 +7,8 @@ interface Transaction extends Comparable<Transaction>{
     /**
      * the four types of transactions our system can process
      */
-    enum TxType{BUY, SELL, DEPOSIT, WITHDRAW}
+    enum TxType{BUY, SELL, DEPOSIT, WITHDRAW, STOCK_TRANSFER, CASH_TRANSFER}
+
 
     /**
      * @return which type of transaction is this?

@@ -7,7 +7,8 @@ public class Patron {
     private final int id;
     private SavingsAccount savings;
     private BrokerageAccount brokerage;
-    private Bank bank;
+    private final Bank bank;
+    private final String name;
 
     /**
      * Will be called by Bank
@@ -18,11 +19,12 @@ public class Patron {
      * @see Bank#openNewSavingsAccount(Patron)
      * @see Bank#openNewBrokerageAccount(Patron)
      */
-    protected Patron(int id, Bank bank){
+    protected Patron(int id, Bank bank, String name){
      this.id = id;
      this.bank = bank;
      this.savings = null;
      this.brokerage = null;
+     this.name = name;
     }
     public int getId() {
      return this.id;
